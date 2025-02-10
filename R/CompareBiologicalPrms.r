@@ -14,7 +14,6 @@
 #' my_function(10)
 #' @export
 CompBioPrm <- function(file1, file2, file1group, file2group){
-    source('extract_parameters.R')
     f1groupcode <- file1group
     f2groupcode <- file2group
     f1nboxes <- 53 ##number of boxes in model 1
@@ -23,8 +22,9 @@ CompBioPrm <- function(file1, file2, file1group, file2group){
     file2_data$Parameter <- sub(f2groupcode, f1groupcode, file2_data$Parameter)##if group codes differ
     out <- as_tibble(full_join(file1_data, file2_data, by = "Parameter",
                                suffix = c(paste0("_", f1groupcode), paste0("_", f2groupcode)))) %>%
-        filter(get(paste0('Value_', f1groupcode)) != get(paste0('Value_', f2groupcode)),
-               get(paste0('Value_', f1groupcode)) != f1nboxes)
+        filter(get(paste0("Value_", f1groupcode)) != get(paste0("Value_", f2groupcode)) |
+               is.na(get(paste0("Value_", f1groupcode))) |
+               is.na(get(paste0("Value_", f2groupcode))))
     return(out)
 }
 
