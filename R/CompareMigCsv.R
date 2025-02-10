@@ -9,9 +9,6 @@
 #'             "WMW",  "MWH")
 #' my_function(10)
 #' @export
-
-library(tidyverse)
-
 CompMigFiles <- function(file1, file2, file1group, file2group){
     file1 <- read_csv(file1)
     file2 <- read_csv(file2)

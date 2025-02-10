@@ -7,9 +7,6 @@
 #' @examples
 #' my_function(10)
 #' @export
-
-
-
 extract_parameters <- function(file_path, key) {
     lines <- readLines(file_path)
     parameter_lines <- grep(paste0(key), lines, value = TRUE)

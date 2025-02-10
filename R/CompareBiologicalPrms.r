@@ -13,10 +13,6 @@
 #' "WMW", "MWH")
 #' my_function(10)
 #' @export
-
-library(tidyverse)
-
-## Function to extract parameter-value pairs from file
 CompBioPrm <- function(file1, file2, file1group, file2group){
     source('extract_parameters.R')
     f1groupcode <- file1group
