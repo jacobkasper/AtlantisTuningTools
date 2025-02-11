@@ -17,14 +17,14 @@ CompBioPrm <- function(file1, file2, file1group, file2group){
     f1groupcode <- file1group
     f2groupcode <- file2group
     f1nboxes <- 53 ##number of boxes in model 1
-    file1_data <- as_tibble(extract_parameters(file1, f1groupcode))
-    file2_data <- as_tibble(extract_parameters(file2, f2groupcode))
+    file1_data <- tidyr::as_tibble(extract_parameters(file1, f1groupcode))
+    file2_data <- tidyr::as_tibble(extract_parameters(file2, f2groupcode))
     file2_data$Parameter <- sub(f2groupcode, f1groupcode, file2_data$Parameter)##if group codes differ
-    out <- as_tibble(full_join(file1_data, file2_data, by = "Parameter",
-                               suffix = c(paste0("_", f1groupcode), paste0("_", f2groupcode)))) %>%
-        filter(get(paste0("Value_", f1groupcode)) != get(paste0("Value_", f2groupcode)) |
-               is.na(get(paste0("Value_", f1groupcode))) |
-               is.na(get(paste0("Value_", f2groupcode))))
+    out <- tidyr::as_tibble(dplyr::full_join(file1_data, file2_data, by = "Parameter",
+                                             suffix = c(paste0("_", f1groupcode), paste0("_", f2groupcode)))) |>
+        dplyr::filter(get(paste0("Value_", f1groupcode)) != get(paste0("Value_", f2groupcode)) |
+                      is.na(get(paste0("Value_", f1groupcode))) |
+                      is.na(get(paste0("Value_", f2groupcode))))
     return(out)
 }
 

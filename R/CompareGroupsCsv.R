@@ -10,25 +10,24 @@
 #' my_function(10)
 #' @export
 CompGroupFiles <- function(file1, file2, file1group, file2group){
-    file1 <- read_csv(file1)
-    file2 <- read_csv(file2)
+    file1 <- readr::read_csv(file1)
+    file2 <- readr::read_csv(file2)
     f1groupcode <- file1group
     f2groupcode <- file2group
-    out <- left_join(
-        file1 %>%
-        filter(Code == f1groupcode) %>%
-        select(-c(Index, Name, LongName, GroupType)) %>%
-        pivot_longer(col = -c(Code), names_to = 'Parameter', values_to = 'F1Value') %>%
-              select(-Code) %>%
-        relocate(Parameter) ,
-        file2 %>%
-        rename(LongName = "Long Name",
-               GroupType = InvertType) %>%
-        select(-c(Index, Name, LongName, GroupType)) %>%
-              filter(Code == f2groupcode) %>%
-              pivot_longer(col = -c(Code), names_to = 'Parameter', values_to = 'F2Value') %>%
-              select(-Code)) %>%
-        filter(F1Value != F2Value | is.na(F1Value) | is.na(F2Value))
+    out <- dplyr::left_join(
+        file1 |>
+        dplyr::filter(Code == f1groupcode) |>
+        dplyr::select(-c(Index, Name, LongName, GroupType)) |>
+        tidyr::pivot_longer(col = -c(Code), names_to = 'Parameter', values_to = 'F1Value') |>
+        dplyr::select(-Code) |>
+        dplyr::relocate(Parameter) ,
+        file2 |>
+        dplyr::rename(LongName = "Long Name", GroupType = InvertType) |>
+        dplyr::select(-c(Index, Name, LongName, GroupType)) |>
+        dplyr::filter(Code == f2groupcode) |>
+        tidyr::pivot_longer(col = -c(Code), names_to = 'Parameter', values_to = 'F2Value') |>
+        dplyr::select(-Code)) |>
+        dplyr::filter(F1Value != F2Value | is.na(F1Value) | is.na(F2Value))
     return(out)
 }
 
