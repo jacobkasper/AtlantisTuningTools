@@ -22,7 +22,7 @@ CompGroupFiles <- function(file1, file2, file1group, file2group){
         dplyr::select(-Code) |>
         dplyr::relocate(Parameter) ,
         file2 |>
-        dplyr::rename(LongName = "Long Name", GroupType = InvertType) |>
+        dplyr::rename(LongName = any_of("Long Name"), GroupType = any_of("InvertType")) |>
         dplyr::select(-c(Index, Name, LongName, GroupType)) |>
         dplyr::filter(Code == f2groupcode) |>
         tidyr::pivot_longer(col = -c(Code), names_to = 'Parameter', values_to = 'F2Value') |>
