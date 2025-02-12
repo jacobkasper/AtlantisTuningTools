@@ -11,11 +11,11 @@ CompCatch <- function(file1, file2, groupvector){
     out <- dplyr::bind_rows(
                       readr::read_delim(file1) |>
                       tidyr::pivot_longer(col = -c(Time), names_to = 'code', values_to = 'catch') |>
-                      dplyr::filter(code %in% group) |>
+                      dplyr::filter(code %in% groupvector) |>
                       dplyr::mutate(model = 'M1'),
                       readr::read_delim(file2) |>
                       tidyr::pivot_longer(col = -c(Time), names_to = 'code', values_to = 'catch') |>
-                      dplyr::filter(code %in% group) |>
+                      dplyr::filter(code %in% groupvector) |>
                       dplyr::mutate(model = 'M2')) |>
         ggplot2::ggplot(ggplot2::aes(x = 1947+(Time/365), y = catch, linetype = model)) +
         ggplot2::geom_line() +
