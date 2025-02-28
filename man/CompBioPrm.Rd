@@ -4,7 +4,7 @@
 \alias{CompBioPrm}
 \title{Compares biological parameters from different Atlantis models}
 \usage{
-CompBioPrm(file1, file2, file1group, file2group)
+CompBioPrm(file1, file2, file1group, file2group, diffmodel)
 }
 \arguments{
 \item{x}{Description of parameter x}
@@ -21,6 +21,6 @@ Jacob Kasper, MFRI.
 \examples{
 ##CompBioPrm("E:/Atlantis/input/atlantis6702/Biological_6702_2025_02_07_02.prm",
 "E:/Atlantis/NoBa_params/nordic_biology.prm",
-"WMW", "MWH")
+"WMW", "MWH", 1)
 my_function(10)
 }
