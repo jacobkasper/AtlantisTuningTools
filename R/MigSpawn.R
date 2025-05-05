@@ -8,30 +8,27 @@
 MigSpawnRecTime <- function(bfile, speciescode, mfile, matstage){
     bfile <- readLines(bfile)
     prmget <- stringr::str_c("Recruit_Period_", speciescode,
-                             "|", speciescode, "_Recruit_Time|",
-                             speciescode, "_spawn_period|",
-                             speciescode, "_Time_Spawn")
+                             "|", speciescode, "_Recruit_Time|", speciescode, "_Time_Spawn")
     matching_lines <- stringr::str_subset(bfile, prmget)
     repdat <-
-        dplyr::tibble(Parameter = stringr::str_extract(matching_lines,
-        "^\\S+"), Value = as.numeric(stringr::str_extract(matching_lines, "\\d+")))    |>
-        dplyr::mutate(Event = c('Spawn_Day', 'Recruit_End', 'Recruit_End', 'Recruit_End')) |>
+        dplyr::group_by(dplyr::mutate(dplyr::tibble(Parameter =
+        stringr::str_extract(matching_lines, "^\\S+"),
+        Value = as.numeric(stringr::str_extract(matching_lines, "\\d+"))),
+        Event = c("Recruit_Start", "Recruit_Start", "Recruit_End"))) |>
         dplyr::group_by(Event) |>
-        dplyr::summarise(day = sum(Value))    |>
-        dplyr::mutate(day=ifelse(Event=='Recruit_End', sum(day), day))    |>
-        dplyr::mutate(day2=ifelse(day>365, day-365, day))
+        dplyr::summarise(day = sum(Value)) |>
+        dplyr::arrange(-day) |>
+        dplyr::ungroup() |>
+        dplyr::mutate(day=ifelse(Event=='Recruit_End', sum(day), day))
     migdat <-
-        dplyr::select(dplyr::filter(tidyr::pivot_longer(dplyr::filter(readr::read_csv(mfile),
+        dplyr::mutate(dplyr::summarise(dplyr::group_by(dplyr::mutate(dplyr::select(dplyr::filter(tidyr::pivot_longer(dplyr::filter(readr::read_csv(mfile),
         GroupCode == speciescode, StartStage == matstage), col = -c(GroupCode),
         names_to = "Parameter", values_to = "Value"), Parameter %in%
         c("StartTofY", "EndTofY", "Leave_Period", "Return_Period")),
-        -GroupCode) |>
-    dplyr::mutate(Event = c("MigOut", "MigIn", "MigOut", "MigIn")) |>
-    dplyr::group_by(Event) |>
-        dplyr::summarise(day = sum(Value)) |>
-        dplyr::mutate(day2=ifelse(day>365, day-365, day))
-    out <-     dplyr::bind_rows(repdat, migdat) |>
-        dplyr::arrange(day2)
+        -GroupCode), Event = c("MigOut", "MigIn", "MigOut", "MigIn")),
+        Event), day = sum(Value)))
+out <-
+    dplyr::arrange(dplyr::bind_rows(repdat, migdat), day)
     return(out)
 }
 

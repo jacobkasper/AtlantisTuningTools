@@ -7,7 +7,7 @@
 #' 'E:/Atlantis/output/Atlantis_2025_03/M672025_03_2025_03_27_01/OutCatch.txt',
 #' 'E:/Atlantis/output/Atlantis_2025_03/M672025_03_2025_03_27_01/GroupsIceland.csv')
 #' @export
-CompCatch <- function(file1, file2, groups){
+CPF <- function(file1, file2, groups){
   spcode <- readr::read_delim(groups) |>  dplyr::filter(IsFished==1) |> dplyr::select(Code)
   out <- dplyr::bind_rows(
                       readr::read_delim(file1) |>
