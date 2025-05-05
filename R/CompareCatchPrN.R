@@ -1,14 +1,15 @@
-#' Compares total catch from >1 different Atlantis runs for all harvested species
+#' Compares pr change  from >1 different Atlantis runs for all harvested species to the status quo management
+#' must indicate sq management projection using whichSQ
 #'
 #' @param x Description of parameter x
 #' @return Description of the returned object
 #' @examples
-#' CompCatchN(c('E:/Atlantis/output/Atlantis_2025_03/M672025_03_2025_04_30_01/OutCatchPerFishery.txt',
+#' CompCatchPRN(c('E:/Atlantis/output/Atlantis_2025_03/M672025_03_2025_04_30_01/OutCatchPerFishery.txt',
 #' 'E:/Atlantis/output/Atlantis_2025_03/M672025_03_2025_04_30_22/OutCatchPerFishery.txt'),
-#' 2020)
+#' 2020, 'M672025_03_2025_04_30_01')
 #' @export
 
-CompCatchN <- function(files, styear) {
+CompCatchPRN <- function(files, styear, whichSQ) {
   if (length(files) == 0)
     stop("Please supply at least one file path in 'files'")
   all_catch <-
@@ -36,21 +37,38 @@ CompCatchN <- function(files, styear) {
            )  |>
     dplyr::group_by(year, model, code) |>
     dplyr::summarize(catch=sum(catch))  |>
-    dplyr::filter(year >= styear)
+    dplyr::filter(year >= styear) |>
+    dplyr::group_by(year, model, code)
+  sq_tbl <-
+    all_catch |>
+    dplyr::filter(model %in% whichSQ) |>
+    dplyr::ungroup() |>
+    dplyr::select(year, code, sq_catch = catch)
+  catchPR <- 
+    all_catch |>
+    dplyr::filter(!model %in% whichSQ) |>
+    dplyr::left_join(sq_tbl, by = c("year", "code")) |>
+    dplyr::mutate(vs_sq = catch / sq_catch)
   ggplot2::ggplot(
-             all_catch,
+             catchPR,
              ggplot2::aes(
                         x        = year,
-                        y        = catch,
+                        y        = vs_sq,
                         linetype = model,
                         colour   = model
                       ), lwd = 3
            ) +
+    ggplot2::geom_hline(
+               yintercept = 1,
+               linetype   = "dashed",   # or "solid", "dotted", etc.
+               colour     = "grey40",   # pick any colour you like
+               linewidth  = 0.4         # thickness (optional)
+             ) +
     ggplot2::geom_line() +
-    ggplot2::facet_wrap(~code, scales = "free_y")  +
+    ggplot2::facet_wrap(~code)  +
     ggplot2::labs(
                x        = "Year",
-               y        = "Catch (t)",
+               y        = "vs SQ",
                linetype = "Model",
                colour   = "Model"
              ) +

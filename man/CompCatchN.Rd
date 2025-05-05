@@ -4,7 +4,7 @@
 \alias{CompCatchN}
 \title{Compares total catch from >1 different Atlantis runs for all harvested species}
 \usage{
-CompCatchN(files, groups, styear)
+CompCatchN(files, styear)
 }
 \arguments{
 \item{x}{Description of parameter x}
@@ -18,6 +18,5 @@ Compares total catch from >1 different Atlantis runs for all harvested species
 \examples{
 CompCatchN(c('E:/Atlantis/output/Atlantis_2025_03/M672025_03_2025_04_30_01/OutCatchPerFishery.txt',
 'E:/Atlantis/output/Atlantis_2025_03/M672025_03_2025_04_30_22/OutCatchPerFishery.txt'),
-'E:/Atlantis/output/Atlantis_2025_03/M672025_03_2025_04_30_01/GroupsIceland.csv',
 2020)
 }
